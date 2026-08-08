@@ -29,6 +29,11 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.release>25</maven.compiler.release>
+        <file.encoding>UTF-8</file.encoding>
+        <user.language>en</user.language>
+        <user.country>US</user.country>
+        <user.variant></user.variant>
+        <project.build.outputTimestamp>1980-01-01T00:00:02Z</project.build.outputTimestamp>
     </properties>
     <repositories>
         <repository>
@@ -40,7 +45,7 @@
         <dependency>
             <groupId>io.papermc.paper</groupId>
             <artifactId>paper-api</artifactId>
-            <version>[26.2.build,)</version>
+            <version>26.2.build.111-stable</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>
