@@ -20,7 +20,7 @@
 
 name: '${project.name}'
 version: '${project.version}'
-main: 'ru.vidtu.digdown.Entrypoint'
+main: '${project.groupId}.Entrypoint'
 api-version: '26.2'
 description: '${project.description}'
 website: '${project.url}'
