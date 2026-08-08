@@ -18,10 +18,10 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-name: 'digdown'
-version: '1.0.0'
+name: '${project.name}'
+version: '${project.version}'
 main: 'ru.vidtu.digdown.Entrypoint'
 api-version: '26.2'
-description: 'Force the warden to tick even in non-simulated chunks.'
-website: 'https://github.com/VidTu/digdown'
+description: '${project.description}'
+website: '${project.url}'
 author: 'VidTu'
