@@ -1,4 +1,4 @@
-/* 
+/*
  * digdown is a third-party PaperMC plugin for Minecraft Java Edition
  * that forces the warden to tick even in non-simulated chunks.
  *
@@ -20,7 +20,6 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
-import org.jetbrains.annotations.ApiStatus;
 import org.jspecify.annotations.NullMarked;
 
 /// Main digdown module.

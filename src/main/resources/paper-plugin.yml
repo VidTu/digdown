@@ -18,8 +18,10 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
+# noinspection YAMLSchemaValidation
 name: '${project.name}'
 version: '${project.version}'
+# noinspection YAMLSchemaValidation
 main: '${project.groupId}.Entrypoint'
 api-version: '26.2'
 description: '${project.description}'

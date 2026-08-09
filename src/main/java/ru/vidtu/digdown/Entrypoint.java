@@ -1,4 +1,4 @@
-/* 
+/*
  * digdown is a third-party PaperMC plugin for Minecraft Java Edition
  * that forces the warden to tick even in non-simulated chunks.
  *
@@ -50,22 +50,23 @@ public final class Entrypoint extends JavaPlugin implements Listener {
     /// Logger for this class.
     private static final Logger LOGGER = LogManager.getLogger("digdown/Entrypoint");
 
+    /// A `final` server instance.
+    @SuppressWarnings("FieldNotUsedInToString") // <- Cyclic.
+    private final Server server;
+
     /// Map of ticked wardens mapped to their ticking tasks.
     ///
     /// @apiNote This map is thread-safe
     /// @see #onEntityAddToWorldEvent(EntityAddToWorldEvent)
     /// @see #onEntityRemoveFromWorldEvent(EntityRemoveFromWorldEvent)
-    private static final Map<Warden, ScheduledTask> TICKING_WARDENS = new ConcurrentHashMap<>(0);
-
-    /// A `final` server instance.
-    private final Server server;
+    private final Map<Warden, ScheduledTask> tickingWardens = new ConcurrentHashMap<>(0);
 
     /// Creates a new plugin.
     ///
     /// @apiNote Do not call, called by the server
     @Contract(pure = true)
     public Entrypoint() {
-        // Obtain the server instance.
+        // Assign.
         this.server = this.getServer();
     }
 
@@ -75,6 +76,7 @@ public final class Entrypoint extends JavaPlugin implements Listener {
     @DoNotCall("Called by superclass")
     @Override
     public void onEnable() {
+        // Wrap.
         try {
             // Log.
             LOGGER.info("digdown: Starting...");
@@ -88,86 +90,124 @@ public final class Entrypoint extends JavaPlugin implements Listener {
             // Log.
             LOGGER.info("digdown: Hi!");
         } catch (final Throwable t) {
-            // Log, shutdown, rethrow. (**ERROR**)
-            LOGGER.error("digdown: Unable to init.", t);
-            this.server.shutdown();
+            // Wrap. (x2)
+            try {
+                // Try to shut down.
+                this.server.shutdown();
+            } catch (final Throwable th) {
+                // Suppress.
+                t.addSuppressed(th);
+            }
+
+            // Rethrow.
             throw new RuntimeException("digdown: Unable to init.", t);
         }
     }
 
     /// Processes the addition of a [Warden] into the world.
     ///
-    /// Starts a ticking task, adds the task into the [#TICKING_WARDENS] map for the task
+    /// Starts a ticking task, adds the task into the [#tickingWardens] map for the task
     /// to be cancelled later in [#onEntityRemoveFromWorldEvent(EntityRemoveFromWorldEvent)].
     ///
     /// @param event Event to handle
     /// @apiNote Do not call, called by [`@EventHandler`][EventHandler]
-    /// @see #TICKING_WARDENS
-    /// @see #onEntityRemoveFromWorldEvent(Entity)
+    /// @see #tickingWardens
+    /// @see #onEntityRemoveFromWorldEvent(EntityRemoveFromWorldEvent)
+    /// @see #tickWarden(Warden, Object, ScheduledTask)
     @DoNotCall("Called by @EventHandler")
     @EventHandler(ignoreCancelled = true)
     private void onEntityAddToWorldEvent(final EntityAddToWorldEvent event) {
-        // Skip, if ANY SINGLE ONE of these conditions are met:
-        // - The entity is NOT warden.
-        // - The warden is no longer a valid entity. (e.g., got removed by some plugin)
-        // - The warden is persistent. (e.g., via nametag)
-        if (!(event.getEntity() instanceof final Warden warden) || // Implicit NPE for 'event'
-            !warden.isValid() || !warden.getRemoveWhenFarAway()) return;
+        // Wrap.
+        try {
+            // Skip, if ANY SINGLE ONE of these conditions are met:
+            // - The entity is NOT warden.
+            // - The warden is no longer a valid entity. (e.g., got removed by some plugin)
+            // - The warden is persistent. (e.g., via nametag)
+            if (!(event.getEntity() instanceof final Warden paperWarden) || // Implicit NPE for 'event'
+                    !paperWarden.isValid() || !paperWarden.getRemoveWhenFarAway()) return;
 
-        // Extract the implementation.
-        final Object mojangWarden = Internals.paperWardenToMojangWarden(warden);
+            // Extract the implementation.
+            final Object mojangWarden = Internals.paperWardenToMojangWarden(paperWarden);
 
-        // Start an update task.
-        final Server server = this.server;
-        final ScheduledTask outerTask = warden.getScheduler().runAtFixedRate(this, (final ScheduledTask innerTask) -> {
-            // Stop the task, if the warden meets ANY SINGLE ONE of these conditions:
-            // - Cannot be controlled by the current thread anymore.
-            // - Is no longer a valid entity.
-            // - Got persistent. (e.g., via nametag)
-            if (!server.isOwnedByCurrentRegion(warden) || !warden.isValid() || !warden.getRemoveWhenFarAway()) {
-                innerTask.cancel(); // Implicit NPE for 'innerTask'
-                return;
-            }
+            // Start an update task.
+            final ScheduledTask task = paperWarden.getScheduler().runAtFixedRate(this,
+                    (final ScheduledTask innerTask) -> this.tickWarden(paperWarden, mojangWarden, innerTask),
+                    /*retired=*/null, /*initialDelayTicks=*/1L, /*periodTicks=*/1L);
 
-            // Do nothing, if the warden is currently being ticked by itself.
-            if (warden.isTicking()) return;
-
-            // Wrap.
-            try {
-                // Tick the warden.
-                Internals.tick(mojangWarden);
-            } catch (Throwable t) {
-                // Log, cancel task, rethrow. (**ERROR**)
-                LOGGER.error("digdown: Unable to tick the warden. (warden: {}, mojangWarden: {}, innerTask: {}})", warden, mojangWarden, innerTask, t);
-                innerTask.cancel();
-                throw new RuntimeException("digdown: Unable to tick the warden. (warden: " + warden + ", mojangWarden: " + mojangWarden + ", innerTask: " + innerTask + ')', t);
-            }
-        }, /*retired=*/null, /*initialDelayTicks=*/1L, /*periodTicks=*/1L);
-
-        // Add the task to the ticking map. (and cancel any previous task)
-        if (outerTask == null) return;
-        final ScheduledTask oldTask = TICKING_WARDENS.put(warden, outerTask);
-        if (oldTask == null) return;
-        oldTask.cancel();
+            // Add the task to the ticking map. (and cancel any previous task)
+            if (task == null) return;
+            final ScheduledTask oldTask = this.tickingWardens.put(paperWarden, task);
+            if (oldTask == null) return;
+            oldTask.cancel();
+        } catch (final Throwable t) {
+            // Rethrow.
+            throw new RuntimeException("digdown: Unable to handle entity creation. (event: " + event + ')', t);
+        }
     }
 
     /// Processes the removal of a [Warden] from the world.
     ///
-    /// Stops and removes a ticking task (if any) from the [#TICKING_WARDENS] map.
+    /// Stops and removes a ticking task (if any) from the [#tickingWardens] map.
     ///
     /// @param event Event to handle
     /// @apiNote Do not call, called by [`@EventHandler`][EventHandler]
-    /// @see #TICKING_WARDENS
+    /// @see #tickingWardens
     /// @see #onEntityAddToWorldEvent(EntityAddToWorldEvent)
     @DoNotCall("Called by @EventHandler")
     @EventHandler(ignoreCancelled = true)
     private void onEntityRemoveFromWorldEvent(final EntityRemoveFromWorldEvent event) {
         // Skip, if the entity is NOT warden.
-        if (!(event.getEntity() instanceof final Warden warden)) return; // Implicit NPE for 'event'
+        if (!(event.getEntity() instanceof final Warden paperWarden)) return; // Implicit NPE for 'event'
 
         // Remove the task from the ticking map. (and cancel it)
-        final ScheduledTask oldTask = TICKING_WARDENS.remove(warden);
+        final ScheduledTask oldTask = this.tickingWardens.remove(paperWarden);
         if (oldTask == null) return;
         oldTask.cancel();
+    }
+
+    /// Ticks the warden.
+    ///
+    /// @param paperWarden  Paper (API) warden instance
+    /// @param mojangWarden Mojang (implementation) warden instance
+    /// @param task         Task that currently ticks the warden
+    private void tickWarden(final Warden paperWarden, final Object mojangWarden, final ScheduledTask task) {
+        // Wrap.
+        try {
+            // Cancel the task, if the warden meets ANY SINGLE ONE of these conditions:
+            // - Cannot be controlled by the current thread anymore.
+            // - Is no longer a valid entity.
+            // - Got persistent. (e.g., via nametag)
+            if (!this.server.isOwnedByCurrentRegion(paperWarden) || // Implicit NPE for 'paperWarden'
+                    !paperWarden.isValid() || !paperWarden.getRemoveWhenFarAway()) {
+                task.cancel(); // Implicit NPE for 'task'
+                return;
+            }
+
+            // Do nothing, if the warden is currently being ticked by itself.
+            if (paperWarden.isTicking()) return;
+
+            // Tick the warden.
+            Internals.tick(mojangWarden); // Implicit NPE for 'mojangWarden'
+        } catch (final Throwable t) {
+            // Wrap. (x2)
+            try {
+                // Try to cancel the task.
+                task.cancel(); // Implicit NPE for 'task'
+            } catch (final Throwable th) {
+                // Suppress.
+                t.addSuppressed(th);
+            }
+
+            // Rethrow.
+            throw new RuntimeException("digdown: Unable to tick the warden. (paperWarden: " + paperWarden + ", mojangWarden: " + mojangWarden + ", task: " + task + ')', t);
+        }
+    }
+
+    @Contract(pure = true)
+    @Override
+    public String toString() {
+        return "digdown/Entrypoint{" +
+                "tickingWardens=" + this.tickingWardens +
+                '}';
     }
 }

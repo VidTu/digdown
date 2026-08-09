@@ -1,4 +1,4 @@
-/* 
+/*
  * digdown is a third-party PaperMC plugin for Minecraft Java Edition
  * that forces the warden to tick even in non-simulated chunks.
  *
@@ -55,9 +55,9 @@ final class Internals {
             // Lookup the required internal (but public(!)) methods.
             final MethodHandles.Lookup lookup = MethodHandles.publicLookup();
             CRAFT_WARDEN_GET_HANDLE = lookup.findVirtual(craftWardenClass, "getHandle",
-                MethodType.methodType(mojangWardenClass));
+                    MethodType.methodType(mojangWardenClass));
             MOJANG_WARDEN_TICK = lookup.findVirtual(mojangWardenClass,
-                "tick", MethodType.methodType(void.class));
+                    "tick", MethodType.methodType(void.class));
         } catch (final Throwable t) {
             // Rethrow.
             throw new RuntimeException("digdown: Unable to initialize internals.", t);
@@ -78,17 +78,11 @@ final class Internals {
     ///
     /// @param paperWarden Paper (API) warden instance to convert
     /// @return Converted Mojang (implementation) warden instance
-    /// @throws RuntimeException If conversion fails
+    /// @throws Throwable If conversion fails
     @Contract(pure = true)
-    static Object paperWardenToMojangWarden(final Warden paperWarden) {
-        // Wrap.
-        try {
-            // Convert.
-            return CRAFT_WARDEN_GET_HANDLE.invoke(paperWarden); // Implicit NPE for 'paperWarden'
-        } catch (final Throwable t) {
-            // Rethrow.
-            throw new RuntimeException("digdown: Unable to convert Paper warden to Mojang warden. (paperWarden: " + paperWarden + ')', t);
-        }
+    static Object paperWardenToMojangWarden(final Warden paperWarden) throws Throwable {
+        // Convert.
+        return CRAFT_WARDEN_GET_HANDLE.invoke(paperWarden); // Implicit NPE for 'paperWarden'
     }
 
     /// Ticks the (Mojang) warden.
@@ -97,6 +91,6 @@ final class Internals {
     /// @throws Throwable If ticking fails
     static void tick(final Object mojangWarden) throws Throwable {
         // Tick.
-        MOJANG_WARDEN_TICK.invoke(mojangWarden); // Implicit NPE for 'paperWarden'
+        MOJANG_WARDEN_TICK.invoke(mojangWarden); // Implicit NPE for 'mojangWarden'
     }
 }

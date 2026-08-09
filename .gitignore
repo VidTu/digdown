@@ -20,3 +20,19 @@
 
 # Maven
 target/
+
+# IntelliJ IDEA
+.idea/**
+!/.idea/codeStyles
+!/.idea/codeStyles/**
+!/.idea/copyright
+!/.idea/copyright/**
+!/.idea/dictionaries
+!/.idea/dictionaries/**
+!/.idea/encodings.xml
+!/.idea/icon.png
+!/.idea/inspectionProfiles
+!/.idea/inspectionProfiles/**
+!/.idea/modules
+!/.idea/modules.xml
+!/.idea/modules/**

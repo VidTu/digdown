@@ -18,7 +18,8 @@
 <!-- along with this program.  If not, see <https://www.gnu.org/licenses/>. -->
 
 <!-- SPDX-License-Identifier: GPL-3.0-or-later -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>ru.vidtu.digdown</groupId>
     <artifactId>digdown</artifactId>
@@ -32,7 +33,7 @@
         <file.encoding>UTF-8</file.encoding>
         <user.language>en</user.language>
         <user.country>US</user.country>
-        <user.variant></user.variant>
+        <user.variant/>
         <project.build.outputTimestamp>1980-01-01T00:00:02Z</project.build.outputTimestamp>
     </properties>
     <repositories>
