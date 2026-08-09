@@ -35,5 +35,5 @@ module ru.vidtu.digdown {
 
     // Paper.
     requires org.bukkit;
-    requires org.apache.logging.log4j;
+    requires org.slf4j;
 }

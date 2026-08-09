@@ -26,8 +26,6 @@ import com.destroystokyo.paper.event.entity.EntityAddToWorldEvent;
 import com.destroystokyo.paper.event.entity.EntityRemoveFromWorldEvent;
 import com.google.errorprone.annotations.DoNotCall;
 import io.papermc.paper.threadedregions.scheduler.ScheduledTask;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.bukkit.Server;
 import org.bukkit.entity.Warden;
 import org.bukkit.event.EventHandler;
@@ -36,6 +34,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
 import org.jspecify.annotations.NullMarked;
+import org.slf4j.Logger;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -47,12 +46,12 @@ import java.util.concurrent.ConcurrentHashMap;
 @ApiStatus.Internal
 @NullMarked
 public final class Entrypoint extends JavaPlugin implements Listener {
-    /// Logger for this class.
-    private static final Logger LOGGER = LogManager.getLogger("digdown/Entrypoint");
-
     /// A `final` server instance.
     @SuppressWarnings("FieldNotUsedInToString") // <- Cyclic.
     private final Server server;
+
+    /// Logger for this plugin.
+    private final Logger logger = this.getSLF4JLogger();
 
     /// Map of ticked wardens mapped to their ticking tasks.
     ///
@@ -79,7 +78,8 @@ public final class Entrypoint extends JavaPlugin implements Listener {
         // Wrap.
         try {
             // Log.
-            LOGGER.info("digdown: Starting...");
+            final Logger logger = this.logger;
+            logger.info("digdown: Starting...");
 
             // Preload internals. (call clinit inside it)
             Class.forName(Internals.class.getName(), /*initialize=*/true, Internals.class.getClassLoader());
@@ -88,7 +88,7 @@ public final class Entrypoint extends JavaPlugin implements Listener {
             this.server.getPluginManager().registerEvents(this, this);
 
             // Log.
-            LOGGER.info("digdown: Hi!");
+            logger.info("digdown: Hi!");
         } catch (final Throwable t) {
             // Wrap. (x2)
             try {
