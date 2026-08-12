@@ -51,7 +51,6 @@ public final class Entrypoint extends JavaPlugin implements Listener {
     private final Server server;
 
     /// Logger for this plugin.
-    @SuppressWarnings("FieldNotUsedInToString") // <- Cyclic.
     private final Logger logger = this.getSLF4JLogger();
 
     /// Map of ticked wardens mapped to their ticking tasks.

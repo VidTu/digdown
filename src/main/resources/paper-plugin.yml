@@ -21,7 +21,7 @@
 # noinspection YAMLSchemaValidation
 name: '${project.name}'
 version: '${project.version}'
-# noinspection YAMLSchemaValidation
+# noinspection YAMLSchemaValidation,PluginYml
 main: '${project.groupId}.Entrypoint'
 api-version: '26.2'
 description: '${project.description}'

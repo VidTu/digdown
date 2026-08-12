@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/digdown.iml" filepath="$PROJECT_DIR$/digdown.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/digdown.iml" filepath="$PROJECT_DIR$/.idea/digdown.iml" />
     </modules>
   </component>
 </project>
