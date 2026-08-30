@@ -40,7 +40,7 @@ jobs:
         with:
           cache: 'maven'
           distribution: 'temurin'
-          java-version: '25.0.4'
+          java-version: '25.0.4.1'
       - name: 'Build'
         timeout-minutes: 15
         run: './mvnw package'
