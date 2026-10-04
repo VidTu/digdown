@@ -34,7 +34,6 @@
         <user.language>en</user.language>
         <user.country>US</user.country>
         <user.variant/>
-        <project.build.outputTimestamp>1980-01-01T00:00:02Z</project.build.outputTimestamp>
     </properties>
     <repositories>
         <repository>
