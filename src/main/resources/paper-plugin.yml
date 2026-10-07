@@ -23,7 +23,7 @@ name: '${project.name}'
 version: '${project.version}'
 # noinspection YAMLSchemaValidation,PluginYml
 main: '${project.groupId}.Entrypoint'
-api-version: '26.2'
+api-version: '26.3'
 description: '${project.description}'
 website: '${project.url}'
 author: 'VidTu'
