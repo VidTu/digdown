@@ -22,7 +22,7 @@
 error_prone_annotations = "2.50.0"
 jetbrains-annotations = "26.1.0"
 jspecify = "1.0.1"
-paper-api = "26.3.build.169-beta"
+paper-api = "26.3-rc-3.build.1-alpha"
 
 [libraries]
 error_prone_annotations = { module = "com.google.errorprone:error_prone_annotations", version.ref = "error_prone_annotations" }
