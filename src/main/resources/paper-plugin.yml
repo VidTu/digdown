@@ -18,12 +18,10 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-# noinspection YAMLSchemaValidation
-name: '${project.name}'
-version: '${project.version}'
-# noinspection YAMLSchemaValidation,PluginYml
-main: '${project.groupId}.Entrypoint'
+name: 'digdown'
+version: '${version}'
+main: 'ru.vidtu.digdown.Entrypoint'
 api-version: '26.3'
-description: '${project.description}'
-website: '${project.url}'
+description: 'Force the warden to tick even in non-simulated chunks.'
+website: 'https://github.com/VidTu/digdown'
 author: 'VidTu'

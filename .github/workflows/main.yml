@@ -18,20 +18,21 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-name: 'Build'
+name: 'Build (Main)'
 permissions: { }
+concurrency:
+  group: 'main'
 on:
   push:
-    branches: [ '!main' ]
-  pull_request:
+    branches: [ 'main' ]
   workflow_dispatch:
 jobs:
-  build:
-    name: 'Build'
+  main:
+    name: 'Build (Main)'
     runs-on: 'ubuntu-26.04'
     timeout-minutes: 15
     permissions:
-      contents: 'read'
+      contents: 'write'
     env:
       GRADLE_OPTS: '-Dorg.gradle.java.installations.auto-download=false'
     steps:
@@ -50,9 +51,13 @@ jobs:
         timeout-minutes: 5
         uses: 'gradle/actions/setup-gradle@3f5f9adaf7d9fecd50b5935e54106014257a94e6' # v6.4.0
         with:
-          cache-read-only: true
-          dependency-graph: 'generate'
-      - name: 'Build'
+          # Generate with either:
+          # 1. Linux/macOS/Unix (OpenSSL): openssl rand -base64 32
+          # 2. Linux/macOS/Unix: cat /dev/random | head -c32 | base64
+          # 3. Windows (PowerShell): $bytes=New-Object byte[] 32;[Security.Cryptography.RandomNumberGenerator]::Create().GetBytes($bytes);[Convert]::ToBase64String($bytes)
+          cache-encryption-key: ${{ secrets.GRADLE_ENCRYPTION_KEY }}
+          dependency-graph: 'generate-and-submit'
+      - name: 'Build (Main)'
         timeout-minutes: 15
         run: './gradlew assemble'
       - name: 'Upload JAR'

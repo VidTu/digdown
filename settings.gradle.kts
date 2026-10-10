@@ -20,21 +20,10 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
-import org.jspecify.annotations.NullMarked;
-
-/// Main digdown module.
-///
-/// @author VidTu
-/// @apiNote Internal use only
-@NullMarked
-module ru.vidtu.digdown {
-    // Annotations.
-    requires static org.jspecify;
-    requires static org.jetbrains.annotations;
-    requires static com.google.errorprone.annotations;
-
-    // Paper.
-    requires net.kyori.adventure.api;
-    requires org.bukkit;
-    requires org.slf4j;
+// Plugins.
+plugins {
+    id("org.gradle.toolchains.foojay-resolver-convention") version "1.0.0"
 }
+
+// Project.
+rootProject.name = "digdown"
