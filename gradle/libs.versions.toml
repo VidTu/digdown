@@ -22,7 +22,7 @@
 error_prone_annotations = "2.50.0"
 jetbrains-annotations = "26.1.0"
 jspecify = "1.0.1"
-paper = "26.3.build.169-beta"
+paper-api = "26.3.build.169-beta"
 paperweight-userdev = "2.0.0-beta.24"
 
 [plugins]
@@ -32,3 +32,4 @@ paperweight-userdev = { id = "io.papermc.paperweight.userdev", version.ref = "pa
 error_prone_annotations = { module = "com.google.errorprone:error_prone_annotations", version.ref = "error_prone_annotations" }
 jetbrains-annotations = { module = "org.jetbrains:annotations", version.ref = "jetbrains-annotations" }
 jspecify = { module = "org.jspecify:jspecify", version.ref = "jspecify" }
+paper-api = { module = "io.papermc.paper:paper-api", version.ref = "paper-api" }

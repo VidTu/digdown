@@ -52,7 +52,8 @@ dependencies {
     compileOnly(libs.error.prone.annotations)
 
     // Paper.
-    paperweight.paperDevBundle(libs.versions.paper)
+    compileOnly(libs.paper.api)
+    paperweight.paperDevBundle(libs.versions.paper.api)
 }
 
 tasks.withType<JavaCompile> {
