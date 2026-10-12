@@ -23,6 +23,7 @@
 // Plugins.
 plugins {
     id("java")
+    alias(libs.plugins.paperweight.userdev)
 }
 
 // Language.
@@ -51,7 +52,7 @@ dependencies {
     compileOnly(libs.error.prone.annotations)
 
     // Paper.
-    compileOnly(libs.paper.api)
+    paperweight.paperDevBundle(libs.versions.paper)
 }
 
 tasks.withType<JavaCompile> {
