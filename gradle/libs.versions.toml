@@ -23,7 +23,7 @@ error_prone_annotations = "2.50.0"
 jetbrains-annotations = "26.1.0"
 jspecify = "1.0.1"
 paper = "26.3.build.169-beta"
-paperweight-userdev = "2.0.0-beta.24"
+paperweight-userdev = "2.0.0-SNAPSHOT"
 
 [plugins]
 paperweight-userdev = { id = "io.papermc.paperweight.userdev", version.ref = "paperweight-userdev" }
